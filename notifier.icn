@@ -1,0 +1,23 @@
+#!./icon-v951/bin/icon
+
+global ex_source_f, notifs_sent_f, acceptable_files_f
+
+procedure main(arg)
+    local nametypes, web_address, last_date, line, pattern_list
+    ex_source_f         := open("ex_source", "r")   | stop ("nie znaleziono pliku ex_source (plik adresu www)")
+    notifs_sent_f       := open("notifs_sent")      | stop("nie znaleziono pliku notifs_sent (plik ilości wyslanych" \ 
+    "powiadomien")
+    acceptable_files_f  := open("acceptable_files") | stop("nie znaleziono pliku acceptable_files (plik akceptowalnych"\
+    "nazw cwiczen")
+    
+    write("WDI Notifier")
+    write("Karol Szustakowski 2019")
+
+    pattern_list := list(0, "")
+
+    while line := read(acceptable_files_f) do
+        push(pattern_list, line)
+
+    while line := get(pattern_list) do
+        write(line)
+end
