@@ -1,0 +1,45 @@
+link cfunc
+
+procedure parseWeb(address, acctypes)
+    local date, host, web, path, site_content, regx, line
+
+    regx := ">[^<>]*("
+
+    while line := get(acctypes) do{
+        regx := regx || line
+        if *acctypes > 0 then
+            regx := regx || "|"
+    }
+
+
+    regx := regx || ")[^<>]*<\s*\/a\s*>\s*<\s*\/td\s*><\s*td[^<>]*>[^<>]*<\s*\/td\s*>"
+    
+    address ? {
+        ="http:" | ="HTTP:"
+        tab(many('/'))
+        host := tab(upto(':/') | 0)
+        if pos(0) then
+            path := "/"
+        else
+            path := tab(0)
+    }
+
+    web := tconnect(host, 80) | stop ("Nie mozna polaczyc z ", host)
+
+    writes(web, "GET ", path, " HTTP/1.0\r\n")
+    writes(web, "Host: ", host, "\r\n")
+    writes(web, "\r\n")
+    flush(web)
+    seek(web, 1)
+
+    site_content := ""
+
+    while site_content := site_content || read(web)
+
+    if *site_content < 10 then
+        write("Plik HTTP wyglada na nieprawidlowy")
+
+    close(web)
+    
+    return date
+end

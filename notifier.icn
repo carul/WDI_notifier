@@ -1,9 +1,12 @@
 #!./icon-v951/bin/icon
 
+$include "parseWeb.icn"
+
 global ex_source_f, notifs_sent_f, acceptable_files_f
 
 procedure main(arg)
     local nametypes, web_address, last_date, line, pattern_list
+    last_date := ""
     ex_source_f         := open("ex_source", "r")   | stop ("nie znaleziono pliku ex_source (plik adresu www)")
     notifs_sent_f       := open("notifs_sent")      | stop("nie znaleziono pliku notifs_sent (plik ilości wyslanych" \ 
     "powiadomien")
@@ -18,6 +21,13 @@ procedure main(arg)
     while line := read(acceptable_files_f) do
         push(pattern_list, line)
 
-    while line := get(pattern_list) do
-        write(line)
+    web_address := read(ex_source_f)
+    
+    close(ex_source_f)
+    close(acceptable_files_f)
+
+    parseWeb(web_address, pattern_list)
+
+    write(&date, " ",  &clock)
+
 end
